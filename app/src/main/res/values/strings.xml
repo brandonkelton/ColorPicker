@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Color Picker</string>
+    <string name="textView_label_red">Red</string>
+    <string name="textView_label_green">Green</string>
+    <string name="textView_label_blue">Blue</string>
+    <string name="menu_Save">Save</string>
+    <string name="menu_Restore">Restore</string>
+    <string name="logo_attr_text">Intergalactic Transports</string>
+    <string name="logo_title_label">Sky Color</string>
+    <string name="button_Label_Restore">Restore</string>
+    <string name="button_Label_Save">Save</string>
+    <string name="editText_Label_Save">Name your color...</string>
+    <string name="button_Label_Cancel">Cancel</string>
+    <string name="button_Label_Save">Save</string>
+</resources>
