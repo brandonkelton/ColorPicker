@@ -1,27 +1,52 @@
 package com.example.colorpicker
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
+import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.constraintLayout_main
+import java.io.File
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var background: ColorPickerCanvas
-    private var savedColors: ArrayList<SkyColor> = arrayListOf()
+    private lateinit var savedColors: ArrayList<SkyColor>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar!!.hide()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        loadSavedColors()
+        setSkyColorOptions()
         background = ColorPickerCanvas(this)
         constraintLayout_main.addView(background)
         setupListeners()
+    }
+
+    private fun loadSavedColors() {
+        var file = File(this.baseContext.filesDir, "skyColor")
+        if (file.exists()) {
+            val json = file.readText()
+            val jsonObj = Gson().fromJson<ArrayList<SkyColor>>(json, object: TypeToken<ArrayList<SkyColor>>(){}.type)
+            savedColors = jsonObj
+        } else {
+            savedColors = arrayListOf()
+        }
+    }
+
+    private fun writeSavedColorsToFile() {
+        var file = File(this.baseContext.filesDir, "skyColor")
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+        val json = Gson().toJson(savedColors)
+        file.writeText(json)
     }
 
     private fun setupListeners() {
@@ -63,6 +88,7 @@ class MainActivity : AppCompatActivity() {
         button_Save.setOnClickListener {
             savedColors.add(SkyColor(editText_save.text.toString(), seekBar_red.progress, seekBar_green.progress, seekBar_blue.progress))
             setSkyColorOptions()
+            writeSavedColorsToFile()
             constraintLayout_saveColor.visibility = View.GONE
             val imm = it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(it.windowToken, 0)
