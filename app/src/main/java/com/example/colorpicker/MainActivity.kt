@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
@@ -25,8 +26,15 @@ class MainActivity : AppCompatActivity() {
         loadSavedColors()
         setSkyColorOptions()
         background = ColorPickerCanvas(this)
+        setInitialColorValues()
         constraintLayout_main.addView(background)
         setupListeners()
+    }
+
+    private fun setInitialColorValues() {
+        textView_red_value.text = background.red.toString()
+        textView_green_value.text = background.green.toString()
+        textView_blue_value.text = background.blue.toString()
     }
 
     private fun loadSavedColors() {
@@ -52,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupListeners() {
         seekBar_red.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                textView_red_value.text = progress.toString()
                 background.changeColor(progress, background.green, background.blue)
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -60,6 +69,7 @@ class MainActivity : AppCompatActivity() {
 
         seekBar_green.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                textView_green_value.text = progress.toString()
                 background.changeColor(background.red, progress, background.blue)
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -68,6 +78,7 @@ class MainActivity : AppCompatActivity() {
 
         seekBar_blue.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                textView_blue_value.text = progress.toString()
                 background.changeColor(background.red, background.green, progress)
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -108,13 +119,29 @@ class MainActivity : AppCompatActivity() {
         button_Restore.setOnClickListener {
             val skyColor = spinner_SelectColor.selectedItem as SkyColor
             seekBar_red.progress = skyColor.Red
+            textView_red_value.text = skyColor.Red.toString()
             seekBar_green.progress = skyColor.Green
+            textView_green_value.text = skyColor.Green.toString()
             seekBar_blue.progress = skyColor.Blue
+            textView_blue_value.text = skyColor.Blue.toString()
             constraintLayout_restoreColor.visibility = View.GONE
             val imm = it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }
+
+//    private fun restoreSelectedColor() {
+//        val skyColor = spinner_SelectColor.selectedItem as SkyColor
+//        seekBar_red.progress = skyColor.Red
+//        textView_red_value.text = skyColor.Red.toString()
+//        seekBar_green.progress = skyColor.Green
+//        textView_green_value.text = skyColor.Green.toString()
+//        seekBar_blue.progress = skyColor.Blue
+//        textView_blue_value.text = skyColor.Blue.toString()
+//        constraintLayout_restoreColor.visibility = View.GONE
+//        val imm = this.baseContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        imm.hideSoftInputFromWindow(View(this).windowToken, 0)
+//    }
 
     private fun setSkyColorOptions() {
         val adapter = ArrayAdapter<SkyColor>(this, android.R.layout.simple_spinner_item, savedColors)
