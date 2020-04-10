@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var background: ColorPickerCanvas
     private lateinit var savedColors: ArrayList<SkyColor>
+    private var isColorRequest = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar!!.hide()
@@ -29,6 +30,18 @@ class MainActivity : AppCompatActivity() {
         setInitialColorValues()
         constraintLayout_main.addView(background)
         setupListeners()
+        checkForIntents()
+        setupIsColorRequest()
+    }
+
+    private fun checkForIntents() {
+        isColorRequest = intent.action == "msud.cs3013.ACTION_COLOR"
+    }
+
+    private fun setupIsColorRequest() {
+        if (!isColorRequest) {
+            textView_Apply.visibility = View.GONE
+        }
     }
 
     private fun setInitialColorValues() {
@@ -108,6 +121,14 @@ class MainActivity : AppCompatActivity() {
         textView_Restore.setOnClickListener {
             constraintLayout_saveColor.visibility = View.GONE
             constraintLayout_restoreColor.visibility = View.VISIBLE
+        }
+
+        textView_Apply.setOnClickListener {
+            intent.putExtra("COLOR_RED", seekBar_red.progress)
+            intent.putExtra("COLOR_GREEN", seekBar_green.progress)
+            intent.putExtra("COLOR_BLUE", seekBar_blue.progress)
+            setResult(RESULT_OK, intent)
+            finish()
         }
 
         button_CancelRestore.setOnClickListener {
